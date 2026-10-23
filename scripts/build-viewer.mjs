@@ -37,6 +37,20 @@ const englishOnly = {
   },
 };
 
+// The task table lists assignees by full name rather than dotpm's initial bubbles, so the
+// viewer gets scripts/overrides/AssigneesCell.ts in place of dotpm's. It loads with the
+// original file's directory so its imports resolve the same way.
+const fullNames = {
+  name: "full-names",
+  setup(b) {
+    b.onLoad({ filter: /[\\/]cells[\\/]AssigneesCell\.ts$/ }, (args) => ({
+      contents: readFileSync(join(root, "scripts/overrides/AssigneesCell.ts"), "utf8"),
+      loader: "ts",
+      resolveDir: dirname(args.path),
+    }));
+  },
+};
+
 const js = await build({
   entryPoints: [join(root, "scripts/viewer-entry.ts")],
   bundle: true,
@@ -48,7 +62,7 @@ const js = await build({
   legalComments: "none",
   nodePaths: dotpmNodePaths,
   alias: dotpmAlias,
-  plugins: [englishOnly],
+  plugins: [englishOnly, fullNames],
   // The viewer build defines this for dotpm's standalone HTML export, which is unused here.
   define: { __VIEWER_TEMPLATE__: '""' },
 });

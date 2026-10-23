@@ -257,3 +257,76 @@
     background: var(--secondary);
   }
 }
+
+// Task-table assignees listed by full name (scripts/overrides/AssigneesCell.ts) instead of
+// initial bubbles.
+.dotpm-person {
+  &:not(:last-child)::after {
+    content: ", ";
+    color: var(--text-muted);
+  }
+
+  &--unresolved {
+    color: var(--text-muted);
+  }
+
+  &--link {
+    cursor: pointer;
+
+    &:hover,
+    &:focus-visible {
+      color: var(--text-accent);
+      text-decoration: underline;
+    }
+  }
+}
+
+// Printing (and Save as PDF): the viewer is a fixed-height panel that scrolls, so print would
+// clip whatever lies past its edges. Let it grow to its content, let the table fit the page
+// width, and give a page with a view the full width of the paper.
+@media print {
+  body:has(.dotpm-view) #quartz-body {
+    display: block;
+
+    .sidebar {
+      display: none;
+    }
+  }
+
+  .dotpm-view {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+
+    .dotpm-mount.pm-root {
+      height: auto;
+      border: 0;
+    }
+
+    .pm-content,
+    .pm-snapshot-body,
+    .pm-table-wrapper {
+      overflow: visible;
+    }
+
+    .pm-table {
+      font-size: 10px;
+    }
+
+    // Column widths are set inline from the vault's saved widths, hence !important.
+    .pm-table th,
+    .pm-table td {
+      width: auto !important;
+      min-width: 0 !important;
+      white-space: normal;
+    }
+
+    .pm-table thead th {
+      position: static;
+      padding: 4px 6px;
+    }
+
+    .pm-table tr {
+      break-inside: avoid;
+    }
+  }
+}
