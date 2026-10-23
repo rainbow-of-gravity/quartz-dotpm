@@ -1,0 +1,152 @@
+{
+  "name": "quartz-dotpm",
+  "version": "0.1.0",
+  "description": "Quartz v5 plugin that renders dotpm (Obsidian project manager) projects with dotpm's own Table, Timeline and Board views.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Colin Greiner",
+  "homepage": "https://github.com/rainbow-of-gravity/quartz-dotpm",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rainbow-of-gravity/quartz-dotpm"
+  },
+  "keywords": [
+    "quartz",
+    "quartz-plugin",
+    "obsidian",
+    "dotpm",
+    "project-management",
+    "gantt",
+    "kanban"
+  ],
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./types": {
+      "types": "./dist/types.d.ts",
+      "import": "./dist/types.js"
+    },
+    "./components": {
+      "types": "./dist/components/index.d.ts",
+      "import": "./dist/components/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "build:viewer": "node scripts/build-viewer.mjs",
+    "dev": "tsup --watch",
+    "lint": "eslint . --max-warnings=0",
+    "format": "prettier . --check",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm run lint && npm run format && npm run test",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "preact": "^10.0.0",
+    "vfile": "^6.0.3"
+  },
+  "peerDependenciesMeta": {
+    "preact": {
+      "optional": false
+    },
+    "vfile": {
+      "optional": true
+    }
+  },
+  "dependencies": {
+    "@quartz-community/types": "^1.0.0",
+    "@quartz-community/utils": "^1.0.0"
+  },
+  "devDependencies": {
+    "@types/hast": "^3.0.5",
+    "@types/mdast": "^4.0.4",
+    "@types/node": "^24.10.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "esbuild": "^0.27.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "github-slugger": "^2.0.0",
+    "hast-util-to-jsx-runtime": "^2.3.6",
+    "lucide-static": "^1.61.0",
+    "preact": "^10.28.2",
+    "prettier": "^3.6.2",
+    "sass": "^1.97.3",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3",
+    "unified": "^11.0.5",
+    "vfile": "^6.0.3",
+    "vitest": "^2.1.9",
+    "yaml": "^2.9.1"
+  },
+  "quartz": {
+    "name": "dotpm",
+    "displayName": "dotpm",
+    "category": [
+      "transformer",
+      "emitter",
+      "pageType",
+      "component"
+    ],
+    "version": "0.1.0",
+    "quartzVersion": ">=5.0.0",
+    "dependencies": [],
+    "defaultOrder": 35,
+    "defaultEnabled": true,
+    "defaultOptions": {
+      "configDir": ".obsidian",
+      "hideGeneratedContent": true,
+      "showTaskHeader": true
+    },
+    "optionSchema": {
+      "configDir": {
+        "type": "string",
+        "description": "Vault config folder holding plugins/project-manager/data.json (dotpm's settings)"
+      },
+      "defaultView": {
+        "type": "enum",
+        "values": [
+          "table",
+          "gantt",
+          "kanban"
+        ],
+        "description": "View a project page opens on; defaults to the project's or dotpm's own default"
+      },
+      "hideGeneratedContent": {
+        "type": "boolean",
+        "description": "Hide the task list dotpm writes into project notes, since the views replace it"
+      },
+      "showTaskHeader": {
+        "type": "boolean",
+        "description": "Show status, priority, dates and assignees above task notes"
+      }
+    },
+    "components": {
+      "DotpmView": {
+        "displayName": "dotpm view",
+        "defaultPosition": "beforeBody",
+        "defaultPriority": 40
+      }
+    }
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=10.9.2"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

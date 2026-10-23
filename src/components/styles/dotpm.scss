@@ -1,0 +1,259 @@
+// dotpm's stylesheets read Obsidian's theme variables. Inside a `.dotpm-view` they are mapped
+// onto Quartz's theme, so the views follow the site's colors, fonts and dark mode. The rules
+// after the variables are the few Obsidian chrome styles dotpm leans on (from dotpm's
+// packages/viewer/src/theme.css), scoped to the view so they never touch the rest of the page.
+
+.dotpm-view,
+.dotpm-task-header {
+  --font-interface: var(--bodyFont);
+  --font-monospace: var(--codeFont);
+  --font-ui-smaller: 12px;
+  --font-ui-small: 13px;
+  --font-ui-medium: 15px;
+  --font-ui-large: 20px;
+  --size-4-1: 4px;
+  --size-4-2: 8px;
+  --size-4-4: 16px;
+  --size-4-6: 24px;
+  --size-4-8: 32px;
+  --radius-s: 4px;
+  --radius-m: 8px;
+  --radius-l: 12px;
+  --input-height: 30px;
+  --checkbox-size: 16px;
+  --checkbox-radius: 4px;
+  --icon-size: 18px;
+  --layer-menu: 30;
+  --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.12);
+
+  --background-primary: var(--light);
+  --background-secondary: color-mix(in srgb, var(--lightgray) 40%, var(--light));
+  --background-modifier-border: var(--lightgray);
+  --background-modifier-border-hover: var(--gray);
+  --background-modifier-border-focus: var(--secondary);
+  --background-modifier-hover: color-mix(in srgb, var(--darkgray) 9%, transparent);
+  --background-modifier-form-field: var(--light);
+  --background-modifier-cover: rgba(0, 0, 0, 0.4);
+  --interactive-normal: color-mix(in srgb, var(--lightgray) 50%, var(--light));
+  --interactive-accent: var(--secondary);
+  --interactive-accent-hover: var(--tertiary);
+  --text-normal: var(--darkgray);
+  --text-muted: color-mix(in srgb, var(--darkgray) 72%, var(--light));
+  --text-faint: color-mix(in srgb, var(--darkgray) 45%, var(--light));
+  --text-accent: var(--secondary);
+  --text-on-accent: var(--light);
+  --text-error: #e93147;
+  --color-red: #e93147;
+  --color-orange: #ec7500;
+  --color-yellow: #e0ac00;
+  --color-green: #08b94e;
+  --color-blue: #086ddd;
+  --color-purple: #7852ee;
+}
+
+:root[saved-theme="dark"] {
+  .dotpm-view,
+  .dotpm-task-header {
+    --shadow-s: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --text-error: #fb464c;
+    --color-red: #fb464c;
+    --color-orange: #e9973f;
+    --color-yellow: #e0de71;
+    --color-green: #44cf6e;
+    --color-blue: #4a90e2;
+    --color-purple: #a882ff;
+  }
+}
+
+.dotpm-view {
+  margin: 1rem 0 2rem;
+  font-family: var(--font-interface);
+
+  // dotpm's markup brings its own table, list and heading styling; reset what Quartz's
+  // article styles would otherwise add on top.
+  table {
+    margin: 0;
+  }
+
+  th,
+  td {
+    padding: 0;
+  }
+
+  h1 {
+    margin: 0;
+  }
+
+  // The mounted viewer: a framed panel tall enough for the timeline and board.
+  .dotpm-mount.pm-root {
+    height: clamp(420px, 72vh, 820px);
+    border: 1px solid var(--background-modifier-border);
+    border-radius: var(--radius-m);
+    background: var(--background-primary);
+  }
+
+  // Quartz shows the note's title already; keep dotpm's header for its meta and view switch.
+  .pm-snapshot-icon,
+  .pm-snapshot-title {
+    display: none;
+  }
+
+  .pm-snapshot-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--background-modifier-border);
+    flex-shrink: 0;
+  }
+
+  .pm-snapshot-meta {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: var(--font-ui-smaller);
+  }
+
+  .pm-snapshot-body {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+
+  .pm-snapshot-body > .pm-table-wrapper {
+    flex: 1;
+  }
+
+  [data-task-id] {
+    cursor: pointer;
+  }
+
+  button {
+    font: inherit;
+    font-size: var(--font-ui-small);
+    color: var(--text-normal);
+    background: var(--interactive-normal);
+    border: 0;
+    border-radius: var(--radius-s);
+    padding: 0 12px;
+    height: var(--input-height);
+    box-shadow: var(--shadow-s);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--background-modifier-hover);
+    }
+
+    &.mod-cta {
+      background: var(--interactive-accent);
+      color: var(--text-on-accent);
+    }
+  }
+
+  input[type="checkbox"] {
+    width: var(--checkbox-size);
+    height: var(--checkbox-size);
+    accent-color: var(--interactive-accent);
+  }
+
+  .clickable-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: var(--radius-s);
+    color: var(--text-muted);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--background-modifier-hover);
+      color: var(--text-normal);
+    }
+  }
+
+  .svg-icon {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+  }
+
+  // Before the viewer loads, and without JavaScript: a plain table of the project's tasks.
+  .dotpm-fallback {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    th,
+    td {
+      padding: 0.35em 0.4em;
+      text-align: left;
+      border-bottom: 1px solid var(--lightgray);
+    }
+  }
+}
+
+.dotpm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35em;
+  padding: 0.05em 0.55em;
+  border-radius: 999px;
+  font-size: 0.85em;
+  background: color-mix(in srgb, var(--dotpm-chip, var(--gray)) 18%, transparent);
+  color: var(--darkgray);
+  white-space: nowrap;
+}
+
+.dotpm-chip-dot {
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--dotpm-chip, var(--gray));
+}
+
+.dotpm-task-header {
+  margin: 0.75rem 0 1.25rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--lightgray);
+  border-left: 4px solid var(--dotpm-project, var(--secondary));
+  border-radius: 8px;
+  font-size: 0.9rem;
+
+  dl {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.35rem 1rem;
+    margin: 0;
+  }
+
+  dt {
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  dd {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+  }
+}
+
+.dotpm-progress {
+  position: relative;
+  display: inline-block;
+  width: 6em;
+  height: 0.45em;
+  border-radius: 999px;
+  background: var(--lightgray);
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: var(--dotpm-progress);
+    background: var(--secondary);
+  }
+}

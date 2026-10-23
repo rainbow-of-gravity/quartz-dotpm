@@ -1,0 +1,14 @@
+{
+  "statuses": [
+    { "id": "todo", "label": "Backlog", "color": "#8a94a0", "icon": "", "complete": false },
+    { "id": "in-progress", "label": "Doing", "color": "#8b72be", "icon": "hammer", "complete": false },
+    { "id": "done", "label": "Shipped", "color": "#79b58d", "icon": "", "complete": true }
+  ],
+  "projectFilters": {
+    "project:Projects/Alpha/Alpha.md": {
+      "sort": [{ "key": "due", "dir": "desc" }],
+      "group": { "field": "priority" },
+      "ganttGranularity": "month"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+dist
+src/generated
+vendor
+test/fixtures
