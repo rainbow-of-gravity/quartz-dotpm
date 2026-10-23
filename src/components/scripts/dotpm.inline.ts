@@ -112,6 +112,28 @@ document.addEventListener("nav", async () => {
   document.addEventListener("themechange", onTheme);
   window.addCleanup(() => document.removeEventListener("themechange", onTheme));
 
+  // Paper is white: print with the light theme, then restore the reader's choice. Dark text
+  // colors would otherwise print light grey, since the view keeps its colors exact in print.
+  let printedFrom: string | null = null;
+  const beforePrint = () => {
+    if (!isDark()) return;
+    printedFrom = "dark";
+    document.documentElement.setAttribute("saved-theme", "light");
+    onTheme();
+  };
+  const afterPrint = () => {
+    if (printedFrom === null) return;
+    document.documentElement.setAttribute("saved-theme", printedFrom);
+    printedFrom = null;
+    onTheme();
+  };
+  window.addEventListener("beforeprint", beforePrint);
+  window.addEventListener("afterprint", afterPrint);
+  window.addCleanup(() => {
+    window.removeEventListener("beforeprint", beforePrint);
+    window.removeEventListener("afterprint", afterPrint);
+  });
+
   let dotpm: DotpmViewer;
   try {
     const base = window.location.href;

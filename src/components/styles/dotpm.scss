@@ -258,6 +258,12 @@
   }
 }
 
+// Assignee names in the task table: the cell would otherwise inherit Quartz's line height,
+// which is fixed in pixels for body text and spaces wrapped names far apart.
+.dotpm-view .dotpm-people {
+  line-height: 1.4;
+}
+
 // Task-table assignees listed by full name (scripts/overrides/AssigneesCell.ts) instead of
 // initial bubbles.
 .dotpm-person {
@@ -284,6 +290,11 @@
 // Printing (and Save as PDF): the viewer is a fixed-height panel that scrolls, so print would
 // clip whatever lies past its edges. Let it grow to its content, let the table fit the page
 // width, and give a page with a view the full width of the paper.
+//
+// Quartz puts this stylesheet in a cascade layer, while dotpm's viewer stylesheet loads
+// unlayered, and unlayered rules beat layered ones whatever their specificity. Only
+// !important rules in a layer win over them, so every rule here that overrides a viewer
+// style needs it.
 @media print {
   body:has(.dotpm-view) #quartz-body {
     display: block;
@@ -298,31 +309,42 @@
     -webkit-print-color-adjust: exact;
 
     .dotpm-mount.pm-root {
-      height: auto;
-      border: 0;
+      height: auto !important;
+      border: 0 !important;
+      overflow: visible !important;
     }
 
     .pm-content,
     .pm-snapshot-body,
     .pm-table-wrapper {
-      overflow: visible;
+      overflow: visible !important;
     }
 
     .pm-table {
-      font-size: 10px;
+      font-size: 10px !important;
     }
 
-    // Column widths are set inline from the vault's saved widths, hence !important.
+    // Column widths are set inline from the vault's saved widths.
     .pm-table th,
     .pm-table td {
       width: auto !important;
       min-width: 0 !important;
-      white-space: normal;
+      white-space: normal !important;
     }
 
     .pm-table thead th {
-      position: static;
-      padding: 4px 6px;
+      position: static !important;
+      padding: 4px 6px !important;
+    }
+
+    // The progress bar's track takes its width from the cell, so the cell keeps room for it;
+    // the time chip stays on one line.
+    .pm-table td.pm-table-cell-progress {
+      min-width: 80px !important;
+    }
+
+    .pm-table td.pm-table-cell-time {
+      white-space: nowrap !important;
     }
 
     .pm-table tr {
