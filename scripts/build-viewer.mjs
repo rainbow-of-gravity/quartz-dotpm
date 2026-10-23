@@ -37,14 +37,31 @@ const englishOnly = {
   },
 };
 
-// The task table lists assignees by full name rather than dotpm's initial bubbles, so the
-// viewer gets scripts/overrides/AssigneesCell.ts in place of dotpm's. It loads with the
-// original file's directory so its imports resolve the same way.
-const fullNames = {
-  name: "full-names",
+// The site changes a few of dotpm's viewer modules: the task table lists assignees by full
+// name rather than initial bubbles, and sorts and collapses where dotpm's snapshot table is
+// read-only. Each file in scripts/overrides/ stands in for dotpm's module of the same path,
+// loaded with the original's directory so its imports resolve the same way. An override
+// that builds on the original imports it as `dotpm-original:./<module>`.
+const overrides = [
+  { filter: /[\\/]cells[\\/]AssigneesCell\.ts$/, file: "scripts/overrides/AssigneesCell.ts" },
+  { filter: /[\\/]views[\\/]snapshotTable\.ts$/, file: "scripts/overrides/snapshotTable.ts" },
+];
+const overrideModules = {
+  name: "overrides",
   setup(b) {
-    b.onLoad({ filter: /[\\/]cells[\\/]AssigneesCell\.ts$/ }, (args) => ({
-      contents: readFileSync(join(root, "scripts/overrides/AssigneesCell.ts"), "utf8"),
+    for (const { filter, file } of overrides) {
+      b.onLoad({ filter, namespace: "file" }, (args) => ({
+        contents: readFileSync(join(root, file), "utf8"),
+        loader: "ts",
+        resolveDir: dirname(args.path),
+      }));
+    }
+    b.onResolve({ filter: /^dotpm-original:/ }, (args) => ({
+      path: join(args.resolveDir, `${args.path.slice("dotpm-original:".length)}.ts`),
+      namespace: "dotpm-original",
+    }));
+    b.onLoad({ filter: /.*/, namespace: "dotpm-original" }, (args) => ({
+      contents: readFileSync(args.path, "utf8"),
       loader: "ts",
       resolveDir: dirname(args.path),
     }));
@@ -62,7 +79,7 @@ const js = await build({
   legalComments: "none",
   nodePaths: dotpmNodePaths,
   alias: dotpmAlias,
-  plugins: [englishOnly, fullNames],
+  plugins: [englishOnly, overrideModules],
   // The viewer build defines this for dotpm's standalone HTML export, which is unused here.
   define: { __VIEWER_TEMPLATE__: '""' },
 });

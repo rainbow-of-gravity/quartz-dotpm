@@ -258,6 +258,20 @@
   }
 }
 
+// Subtask rows in the task table (scripts/overrides/snapshotTable.ts) are shaded, so a
+// subtask reads apart from the next top-level task; a collapsed parent hides its subtasks.
+// An Obsidian theme on the site may color every table row from a later cascade layer, which
+// outranks this one, hence !important.
+.dotpm-view {
+  .dotpm-subtask-row {
+    background: color-mix(in srgb, var(--darkgray) 7%, var(--light)) !important;
+  }
+
+  .dotpm-row-hidden {
+    display: none;
+  }
+}
+
 // Assignee names in the task table: the cell would otherwise inherit Quartz's line height,
 // which is fixed in pixels for body text and spaces wrapped names far apart.
 .dotpm-view .dotpm-people {
